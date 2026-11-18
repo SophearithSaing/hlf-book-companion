@@ -2,6 +2,22 @@
 
 Long bash commands that was used in the book.
 
+## Chaincode deployment
+
+1. Package chaincode
+2. Sent to peers and install
+3. Org approve chaincode definitions
+4. Commit chaincode to channel
+
+## Get started
+
+```bash
+# start test network
+./network.sh up -ca
+# create channel
+./network.sh createChannel
+```
+
 ## Deploy Chaincode
 
 ```bash
@@ -22,11 +38,21 @@ export CORE_PEER_ADDRESS=localhost:7051
 ## Invoke InitLedger
 
 ```bash
+# under asset-transfer-basic
 peer chaincode invoke -o localhost:7050 --ordererTLSHostnameOverride orderer.example.com --tls --cafile "${PWD}/organizations/ordererOrganizations/example.com/orderers/orderer.example.com/msp/tlscacerts/tlsca.example.com-cert.pem" -C mychannel -n basic --peerAddresses localhost:7051 --tlsRootCertFiles "${PWD}/organizations/peerOrganizations/org1.example.com/peers/peer0.org1.example.com/tls/ca.crt" --peerAddresses localhost:9051 --tlsRootCertFiles "${PWD}/organizations/peerOrganizations/org2.example.com/peers/peer0.org2.example.com/tls/ca.crt" -c '{"function":"InitLedger","Args":[]}'
 ```
 
-## Query
+## Query Chaincode
 
 ```bash
-peer chaincode query -C myChannel -n basic -c '{"Args":["GetAllAssets"]}'
+# under asset-transfer-basic
+peer chaincode query -C mychannel -n basic -c '{"Args":["GetAllAssets"]}'
+```
+
+## Upgrade Chaincode
+
+```bash
+# version can be any string that has not been used before
+# sequence must be an integer sequential
+./network.sh deployCC -ccn basic -ccp ../asset-transfer-basic/chaincode-go -ccl go -ccv <version> -ccs <sequence>
 ```
