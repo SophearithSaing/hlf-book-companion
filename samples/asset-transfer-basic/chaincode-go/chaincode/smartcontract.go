@@ -192,3 +192,26 @@ func (s *SmartContract) GetAllAssets(ctx contractapi.TransactionContextInterface
 
 	return assets, nil
 }
+
+// ReadAssetHistory returns the history of a given asset
+func (s *SmartContract) ReadAssetHistory(ctx contractapi.TransactionContextInterface, id string) ([]map[string]interface{}, error) {
+	resultsIterator, err := ctx.GetStub().GetHistoryForKey(id)
+	if err != nil {
+		return nil, err
+	}
+	defer resultsIterator.Close()
+	assets := make([]map[string]interface{}, 0)
+	for resultsIterator.HasNext() {
+		queryResponse, err := resultsIterator.Next()
+		if err != nil {
+			return nil, err
+		}
+		var asset map[string]interface{}
+		err = json.Unmarshal(queryResponse.Value, &asset)
+		if err != nil {
+			return nil, err
+		}
+		assets = append(assets, asset)
+	}
+	return assets, nil
+}

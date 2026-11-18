@@ -83,6 +83,7 @@ func main() {
 	readAssetByID(contract)
 	transferAssetAsync(contract)
 	exampleErrorHandling(contract)
+	readAssetHistoryByID(contract)
 }
 
 // newGrpcConnection creates a gRPC connection to the Gateway server.
@@ -277,4 +278,15 @@ func formatJSON(data []byte) string {
 		panic(fmt.Errorf("failed to parse JSON: %w", err))
 	}
 	return prettyJSON.String()
+}
+
+// Evaluate a tx by assetId to get history
+func readAssetHistoryByID(contract *client.Contract) {
+	fmt.Printf("\n-> Evaluate Transaction: ReadAssetHistory, function returns asset history \n")
+	evaluateResult, err := contract.EvaluateTransaction("ReadAssetHistory", assetId)
+	if err != nil {
+		panic(fmt.Errorf("failed to evaluate transaction: %w", err))
+	}
+	result := formatJSON(evaluateResult)
+	fmt.Printf("Result:%s\n", result)
 }
